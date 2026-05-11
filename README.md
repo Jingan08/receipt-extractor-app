@@ -1,5 +1,7 @@
 # 🧾 Receipt-to-Form Auto-Fill Web App
 
+![Receipt-to-Form Interface Screenshot](screenshot.png)
+
 A sleek, modern web application that takes the pain out of expense reporting! Just upload a picture of a receipt, and watch as our AI magically extracts the merchant name, date, category, total amount, and currency.
 
 Built with **Next.js**, styled beautifully with **Tailwind CSS**, and powered by the **Google Gemini API**.
