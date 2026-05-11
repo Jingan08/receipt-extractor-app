@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { UploadCloud, Receipt, Loader2, CheckCircle2, Save, Trash2 } from "lucide-react";
+import { UploadCloud, Receipt, Loader2, CheckCircle2, Save, Trash2, Download } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface ExtractedData {
   merchantName: string;
@@ -122,6 +124,40 @@ export default function Home() {
     const updated = savedReceipts.filter(r => r.id !== id);
     setSavedReceipts(updated);
     localStorage.setItem("receipts", JSON.stringify(updated));
+  };
+
+  const downloadPdfSummary = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(20);
+    doc.text("Receipt Summary", 14, 22);
+    
+    let total = 0;
+    savedReceipts.forEach(r => {
+      const val = parseFloat(r.totalAmount.replace(/[^0-9.-]/g, ''));
+      if (!isNaN(val)) {
+        total += val;
+      }
+    });
+
+    const tableData = savedReceipts.map(r => [
+      r.merchantName || 'N/A',
+      r.date || 'N/A',
+      r.currency || '',
+      r.totalAmount || '0.00'
+    ]);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [['Merchant', 'Date', 'Currency', 'Amount']],
+      body: tableData,
+      foot: [['', '', 'Total', total.toFixed(2)]],
+      theme: 'grid',
+      headStyles: { fillColor: [59, 130, 246] },
+      footStyles: { fillColor: [16, 185, 129] }
+    });
+
+    doc.save("receipt-summary.pdf");
   };
 
   return (
@@ -259,7 +295,16 @@ export default function Home() {
       {/* Saved Receipts Section */}
       {savedReceipts.length > 0 && (
         <section className="bg-slate-800/30 backdrop-blur-sm rounded-3xl p-6 border border-slate-700/50">
-          <h2 className="text-2xl font-semibold mb-6">Saved Receipts</h2>
+          <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+            <h2 className="text-2xl font-semibold">Saved Receipts</h2>
+            <button 
+              onClick={downloadPdfSummary}
+              className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-sm text-sm"
+            >
+              <Download size={16} />
+              Download PDF Summary
+            </button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {savedReceipts.map((receipt) => (
               <div key={receipt.id} className="bg-slate-900/60 rounded-2xl p-5 border border-slate-700 flex flex-col hover:border-slate-500 transition-colors group">
