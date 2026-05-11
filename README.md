@@ -1,6 +1,6 @@
 # 🧾 Receipt-to-Form Auto-Fill Web App
 
-![Receipt-to-Form Interface Screenshot](screenshot.png)
+![Receipt-to-Form Interface Screenshot](user-interface.png)
 
 A sleek, modern web application that takes the pain out of expense reporting! Just upload a picture of a receipt, and watch as our AI magically extracts the merchant name, date, category, total amount, and currency.
 
