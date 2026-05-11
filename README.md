@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧾 Receipt-to-Form Auto-Fill Web App
 
-## Getting Started
+A sleek, modern web application that takes the pain out of expense reporting! Just upload a picture of a receipt, and watch as our AI magically extracts the merchant name, date, total amount, and currency.
 
-First, run the development server:
+Built with **Next.js**, styled beautifully with **Tailwind CSS**, and powered by the **Google Gemini API**.
 
-```bash
+## ✨ Features
+- **AI-Powered Extraction**: Uses advanced multimodal AI to read receipts accurately.
+- **Modern UI**: Stunning glassmorphism design with a dynamic, responsive layout.
+- **Local Storage**: Automatically saves your processed receipts directly in your browser.
+- **Secure Backend**: All AI communication is handled securely via Next.js API routes, keeping your API key safe.
+
+## 🧠 How it Works (Model & Prompt)
+
+This application leverages Google's **`gemini-2.5-flash`** model, which is incredibly fast and excellent at multimodal tasks (reading images).
+
+**The exact prompt we use under the hood:**
+\`\`\`text
+Analyze this receipt image and extract the following information.
+Return ONLY a JSON object with the following keys exactly as specified, no markdown, no other text:
+{
+  "merchantName": "Name of the store or merchant (string)",
+  "date": "Date of the transaction in YYYY-MM-DD format (string)",
+  "totalAmount": "Total amount paid, just the number (string)",
+  "currency": "The currency symbol or code (e.g., $, USD, EUR) (string)"
+}
+If a field cannot be found, return an empty string for that field.
+\`\`\`
+
+## 🚀 How to Run It Locally
+
+### 1. Prerequisites
+- Node.js installed on your machine.
+- A free Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+### 2. Setup
+Clone or download the repository, then navigate to the folder in your terminal:
+\`\`\`bash
+cd receipt-app
+\`\`\`
+
+Install the dependencies:
+\`\`\`bash
+npm install
+\`\`\`
+
+### 3. Configure API Key
+Create a file named \`.env.local\` in the root directory and add your API key:
+\`\`\`env
+GEMINI_API_KEY=your_actual_api_key_here
+\`\`\`
+
+### 4. Start the Magic
+Run the development server:
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser and start uploading receipts!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Built with ❤️ and AI.*
