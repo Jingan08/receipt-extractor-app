@@ -10,6 +10,7 @@ interface ExtractedData {
   date: string;
   totalAmount: string;
   currency: string;
+  category: string;
 }
 
 interface SavedReceipt extends ExtractedData {
@@ -26,6 +27,7 @@ export default function Home() {
     date: "",
     totalAmount: "",
     currency: "",
+    category: "",
   });
   const [savedReceipts, setSavedReceipts] = useState<SavedReceipt[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +86,7 @@ export default function Home() {
         date: result.date || "",
         totalAmount: result.totalAmount || "",
         currency: result.currency || "",
+        category: result.category || "Others",
       });
     } catch (err: any) {
       console.error(err);
@@ -93,7 +96,7 @@ export default function Home() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -117,7 +120,7 @@ export default function Home() {
     // Reset form
     setFile(null);
     setPreviewUrl(null);
-    setFormData({ merchantName: "", date: "", totalAmount: "", currency: "" });
+    setFormData({ merchantName: "", date: "", totalAmount: "", currency: "", category: "" });
   };
 
   const handleDelete = (id: string) => {
@@ -143,15 +146,16 @@ export default function Home() {
     const tableData = savedReceipts.map(r => [
       r.merchantName || 'N/A',
       r.date || 'N/A',
+      r.category || 'Others',
       r.currency || '',
       r.totalAmount || '0.00'
     ]);
 
     autoTable(doc, {
       startY: 30,
-      head: [['Merchant', 'Date', 'Currency', 'Amount']],
+      head: [['Merchant', 'Date', 'Category', 'Currency', 'Amount']],
       body: tableData,
-      foot: [['', '', 'Total', total.toFixed(2)]],
+      foot: [['', '', '', 'Total', total.toFixed(2)]],
       theme: 'grid',
       headStyles: { fillColor: [59, 130, 246] },
       footStyles: { fillColor: [16, 185, 129] }
@@ -274,6 +278,22 @@ export default function Home() {
                 />
               </div>
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
+              >
+                <option value="">Select a category</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
             
             <div className="pt-4">
               <button
@@ -318,7 +338,12 @@ export default function Home() {
                     <Trash2 size={16} />
                   </button>
                 </div>
-                <div className="flex justify-between items-end mt-auto pt-4">
+                <div className="mt-2 mb-4">
+                  <span className="inline-block bg-slate-700/50 text-blue-300 text-xs px-2.5 py-1 rounded-full border border-slate-600/50">
+                    {receipt.category || 'Others'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-end mt-auto pt-2">
                   <span className="text-sm text-slate-400">{receipt.date || 'No date'}</span>
                   <span className="font-semibold text-emerald-400 text-xl">
                     {receipt.currency} {receipt.totalAmount}

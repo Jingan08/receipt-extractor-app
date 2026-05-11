@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
         "merchantName": "Name of the store or merchant (string)",
         "date": "Date of the transaction in YYYY-MM-DD format (string)",
         "totalAmount": "Total amount paid, just the number (string)",
-        "currency": "The currency symbol or code (e.g., $, USD, EUR) (string)"
+        "currency": "The currency symbol or code (e.g., $, USD, EUR) (string)",
+        "category": "Classify the receipt into one of these exactly: Food, Transport, Shopping, or Others (string)"
       }
       If a field cannot be found, return an empty string for that field.
     `;
