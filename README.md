@@ -1,11 +1,12 @@
 # 🧾 Receipt-to-Form Auto-Fill Web App
 
-A sleek, modern web application that takes the pain out of expense reporting! Just upload a picture of a receipt, and watch as our AI magically extracts the merchant name, date, total amount, and currency.
+A sleek, modern web application that takes the pain out of expense reporting! Just upload a picture of a receipt, and watch as our AI magically extracts the merchant name, date, category, total amount, and currency.
 
 Built with **Next.js**, styled beautifully with **Tailwind CSS**, and powered by the **Google Gemini API**.
 
 ## ✨ Features
-- **AI-Powered Extraction**: Uses advanced multimodal AI to read receipts accurately.
+- **AI-Powered Extraction & Classification**: Uses advanced multimodal AI to read receipts accurately and automatically categorize them (Food, Transport, Shopping, Others).
+- **PDF Summaries**: Download a complete breakdown of all your saved receipts with calculated totals into a clean PDF document.
 - **Modern UI**: Stunning glassmorphism design with a dynamic, responsive layout.
 - **Local Storage**: Automatically saves your processed receipts directly in your browser.
 - **Secure Backend**: All AI communication is handled securely via Next.js API routes, keeping your API key safe.
@@ -22,7 +23,8 @@ Return ONLY a JSON object with the following keys exactly as specified, no markd
   "merchantName": "Name of the store or merchant (string)",
   "date": "Date of the transaction in YYYY-MM-DD format (string)",
   "totalAmount": "Total amount paid, just the number (string)",
-  "currency": "The currency symbol or code (e.g., $, USD, EUR) (string)"
+  "currency": "The currency symbol or code (e.g., $, USD, EUR) (string)",
+  "category": "Classify the receipt into one of these exactly: Food, Transport, Shopping, or Others (string)"
 }
 If a field cannot be found, return an empty string for that field.
 \`\`\`
