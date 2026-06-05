@@ -30,11 +30,21 @@ export async function POST(req: NextRequest) {
       {
         "merchantName": "Name of the store or merchant (string)",
         "date": "Date of the transaction in YYYY-MM-DD format (string)",
+        "time": "Time of the transaction (e.g. 14:30, 2:30 PM) (string)",
+        "receiptNumber": "Receipt, invoice, or ticket ID (string)",
+        "tax": "Tax amount, SST, GST, or VAT, just the number (string)",
         "totalAmount": "Total amount paid, just the number (string)",
-        "currency": "The currency symbol or code (e.g., $, USD, EUR) (string)",
-        "category": "Classify the receipt into one of these exactly: Food, Transport, Shopping, or Others (string)"
+        "currency": "The currency symbol or code (e.g., $, USD, RM, EUR) (string)",
+        "category": "Classify the receipt into one of these exactly: Food, Transport, Shopping, or Others (string)",
+        "items": [
+          {
+            "name": "Description of the item purchased (string)",
+            "quantity": "Quantity of the item purchased (number)",
+            "price": "Item total cost, just the number (string)"
+          }
+        ]
       }
-      If a field cannot be found, return an empty string for that field.
+      If a field cannot be found, return an empty string for that field (or empty array for items).
     `;
 
     const imageParts = [
@@ -60,7 +70,7 @@ export async function POST(req: NextRequest) {
       if (cleanText.endsWith("\`\`\`")) {
         cleanText = cleanText.substring(0, cleanText.length - 3);
       }
-      
+
       const parsedData = JSON.parse(cleanText);
       return NextResponse.json(parsedData);
     } catch (e) {
@@ -70,8 +80,23 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error processing receipt:", error);
+
+    // Check if it is a rate limit / quota exceeded error
+    if (
+      error?.status === 429 ||
+      error?.statusText === "Too Many Requests" ||
+      error?.message?.includes("429") ||
+      error?.message?.includes("quota") ||
+      error?.message?.includes("Too Many Requests")
+    ) {
+      return NextResponse.json(
+        { error: "Gemini API rate limit exceeded. Please wait a moment and try again." },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
