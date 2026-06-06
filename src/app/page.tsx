@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { UploadCloud, Receipt, Loader2, CheckCircle2, Save, Trash2, Download, X } from "lucide-react";
+import { UploadCloud, Receipt, Loader2, CheckCircle2, Save, Trash2, Download, X, ZoomIn, ZoomOut } from "lucide-react";
 
 interface ItemPurchased {
   name: string;
@@ -93,6 +93,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [selectedReceiptForModal, setSelectedReceiptForModal] = useState<SavedReceipt | null>(null);
   const [modalImageUrl, setModalImageUrl] = useState<string | null>(null);
+  const [isZoomedModalOpen, setIsZoomedModalOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -300,6 +302,7 @@ export default function Home() {
   const handleCloseModal = () => {
     setSelectedReceiptForModal(null);
     setModalImageUrl(null);
+    setIsZoomedModalOpen(false);
   };
 
 
@@ -587,7 +590,12 @@ export default function Home() {
                 <img
                   src={modalImageUrl}
                   alt="Receipt"
-                  className="max-h-[350px] md:max-h-[500px] object-contain rounded-xl shadow-lg border border-slate-850"
+                  className="max-h-[350px] md:max-h-[500px] object-contain rounded-xl shadow-lg border border-slate-850 cursor-zoom-in hover:opacity-90 transition-opacity"
+                  onClick={() => {
+                    setIsZoomedModalOpen(true);
+                    setZoomScale(1);
+                  }}
+                  title="Click to view and zoom receipt image"
                 />
               ) : (
                 <div className="flex flex-col items-center opacity-40">
@@ -691,6 +699,56 @@ export default function Home() {
         </div>
       )}
 
+      {/* Lightbox / Zoom modal */}
+      {isZoomedModalOpen && modalImageUrl && (
+        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[60] flex flex-col items-center justify-center p-4 animate-fade-in">
+          {/* Top toolbar */}
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+            <span className="text-slate-350 text-sm font-medium">Receipt Image Viewer</span>
+            <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur border border-slate-700/50 rounded-xl px-3 py-1.5 shadow-lg">
+              <button
+                type="button"
+                onClick={() => setZoomScale((prev) => Math.max(0.6, prev - 0.2))}
+                className="text-slate-300 hover:text-white p-1.5 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setZoomScale((prev) => Math.min(3.0, prev + 0.2))}
+                className="text-slate-300 hover:text-white p-1.5 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsZoomedModalOpen(false)}
+              className="bg-slate-900/80 backdrop-blur border border-slate-700/50 hover:bg-red-600 hover:border-red-500/50 text-slate-300 hover:text-white p-2 rounded-xl transition-all shadow-lg active:scale-95"
+              title="Close Viewer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Image container */}
+          <div className={`w-full h-full flex justify-center overflow-auto p-8 pt-20 ${zoomScale > 1 ? 'items-start' : 'items-center'}`}>
+            <img
+              src={modalImageUrl}
+              style={{
+                width: `${100 * zoomScale}%`,
+                maxWidth: zoomScale > 1 ? 'none' : '90vw',
+                maxHeight: zoomScale > 1 ? 'none' : '80vh',
+                transition: 'all 0.15s ease-out'
+              }}
+              alt="Zoomed Receipt"
+              className="object-contain rounded-lg shadow-2xl border border-slate-800"
+            />
+          </div>
+        </div>
+      )}
 
     </main>
   );
